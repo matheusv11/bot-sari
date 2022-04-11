@@ -27,9 +27,20 @@ const agendarTicket = async({ login , senha }) => { // OU SÓ MATRICULA, CONTEND
         await browser.close()
         throw Error("Login inválido");
     }
+    
+    //PÁGINA DE TICKETS
+    await page.goto("http://www.floriano.ifpi.edu.br:8080/CortexMobileIFPI/modulos/minhaConta/solicitarTickets.jsf");
+    
+    //VALIDAR DISPONIBILIDADE DE TICKET
+
+    const divTicket= await page.$eval("div[id='j_idt7:tabelaTicketsDaSemanaAVenda:4:j_idt23']", el => el.textContent);
+    const totalTicket = divTicket.match('\W*(Qtd. Disponível: [0-9]+)\W*')[0].split(": ")[1]
+    
+    if(parseInt(totalTicket) <= 0) throw Error("Não há mais ticket disponíveis")
 
     //AGENDAR TICKET
-    await page.goto("http://www.floriano.ifpi.edu.br:8080/CortexMobileIFPI/modulos/minhaConta/solicitarTickets.jsf");
+
+    await page.click("button[name='j_idt7:tabelaTicketsDaSemanaAVenda:4:j_idt38']");
 
     throw("Ticket Resgatado");
 
