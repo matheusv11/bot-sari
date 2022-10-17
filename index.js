@@ -33,11 +33,46 @@ const agendarTicket = async({ login , senha }) => { // OU SÓ MATRICULA, CONTEND
     
     //VALIDAR DISPONIBILIDADE DE TICKET
 
+    // const divs = await page.$$eval("div[class='ui-panel-m-titlebar ui-bar ui-bar-inherit']", el => {
+    //   console.log("EL", el)
+    // });
+
+    // ALTERAR PARA PEGAR O PAI, ASSIM ELE ACESSA O BOTÃO DIRETO
+    // PODE USAR UM CATCH DIRETO AO INVES DO ? também
+    // MELHORAR CODIGO AO INVES DE PEGAR O TICKETID PEGAR A DIV
+    // const ticketId = await page.$$eval("div[class='ui-panel-m-titlebar ui-bar ui-bar-inherit']", el => (el.find(e => e.innerText.includes(new Date().toLocaleDateString('pt-BR')))?.parentElement.id ));
+
+    const almocoJanta = 'Almoço' // Botar em parametros
+
+    const ticketId = await page.$$eval("div[class='ui-panel-m-titlebar ui-bar ui-bar-inherit']", el => (
+      el.find(e => {
+        const [dia, tipo] = e.innerText.split(' - ');
+        return dia.includes('17/10/2022') && tipo === 'Almoço'
+      })?.parentElement.id.replace('23', '40')
+    ));
+
+    if(!ticketId) {
+      throw Error("Não há mais ticket disponíveis neste horário")
+    }
+
+    // VALIDAR CAPTCH
+    const divCaptcha = await page.waitForSelector('div#Captcha iframe');
+    const frame = await divCaptcha.contentFrame();
+
+    frame.$eval('span[id="recaptcha-anchor"]', e => e.click()) // TESTAR OUTRO CLICK
+    
+    await page.waitForTimeout(4000)
+    
+    console.log("Ticket", ticketId)
+
+    await page.$eval(`button[id="${ticketId}"]`, e => e.click())
+    
+    return;
     const divTicket= await page.$eval("div[id='j_idt7:tabelaTicketsDaSemanaAVenda:4:j_idt23']", el => el.textContent);
     const totalTicket = divTicket.match('\W*(Qtd. Disponível: [0-9]+)\W*')[0].split(": ")[1]
     
     if(parseInt(totalTicket) <= 0) throw Error("Não há mais ticket disponíveis")
-
+    
     //AGENDAR TICKET
 
     await page.click("button[name='j_idt7:tabelaTicketsDaSemanaAVenda:4:j_idt38']");
