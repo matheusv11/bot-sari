@@ -1,7 +1,7 @@
 const puppeteer = require("puppeteer");
 const cron      = require('node-cron');
 
-const agendarTicket = async({ login , senha }) => { // OU SÓ MATRICULA, CONTENDO DENTRO LOGIN E SENHA
+const agendarTicket = async({ login , senha, tipo }) => { // OU SÓ MATRICULA, CONTENDO DENTRO LOGIN E SENHA
     // VALIDAR SE TEM SESSÃO
   try {
 
@@ -31,51 +31,33 @@ const agendarTicket = async({ login , senha }) => { // OU SÓ MATRICULA, CONTEND
     //PÁGINA DE TICKETS
     await page.goto("http://www.floriano.ifpi.edu.br:8080/CortexMobileIFPI/modulos/minhaConta/solicitarTickets.jsf");
     
-    //VALIDAR DISPONIBILIDADE DE TICKET
+    // VALIDAR DISPONIBILIDADE DE TICKET
+    const ticketId = await page.evaluate(eval =>{
+      const [...divs] = document.querySelectorAll("div[class='ui-panel-m-titlebar ui-bar ui-bar-inherit']")
 
-    // const divs = await page.$$eval("div[class='ui-panel-m-titlebar ui-bar ui-bar-inherit']", el => {
-    //   console.log("EL", el)
-    // });
-
-    // ALTERAR PARA PEGAR O PAI, ASSIM ELE ACESSA O BOTÃO DIRETO
-    // PODE USAR UM CATCH DIRETO AO INVES DO ? também
-    // MELHORAR CODIGO AO INVES DE PEGAR O TICKETID PEGAR A DIV
-    // const ticketId = await page.$$eval("div[class='ui-panel-m-titlebar ui-bar ui-bar-inherit']", el => (el.find(e => e.innerText.includes(new Date().toLocaleDateString('pt-BR')))?.parentElement.id ));
-
-    const almocoJanta = 'Almoço' // Botar em parametros
-
-    const ticketId = await page.$$eval("div[class='ui-panel-m-titlebar ui-bar ui-bar-inherit']", el => (
-      el.find(e => {
+      return divs.find(e => {
         const [dia, tipo] = e.innerText.split(' - ');
-        return dia.includes('17/10/2022') && tipo === 'Almoço'
-      })?.parentElement.id.replace('23', '40')
-    ));
+        return dia.includes(new Date().toLocaleDateString('pt-BR')) && tipo === eval.tipo
+      })?.parentElement.id
 
-    if(!ticketId) {
+    }, { tipo: tipo });
+
+    const qtdTicket = await page.$eval(`div[id="${ticketId}"] div[class="ui-panel-m-content ui-body ui-body-inherit"] p`, e => e.innerText)
+    const totalTicket = qtdTicket.match('\W*(Qtd. Disponível: [0-9]+)\W*')[0].split(": ")[1]
+
+    if(!ticketId || parseInt(totalTicket) <= 0) {
       throw Error("Não há mais ticket disponíveis neste horário")
     }
 
-    // VALIDAR CAPTCH
+    // VALIDAR CAPTCHA
     const divCaptcha = await page.waitForSelector('div#Captcha iframe');
     const frame = await divCaptcha.contentFrame();
+    frame.$eval('span[id="recaptcha-anchor"]', e => e.click());
 
-    frame.$eval('span[id="recaptcha-anchor"]', e => e.click()) // TESTAR OUTRO CLICK
-    
-    await page.waitForTimeout(4000)
-    
-    console.log("Ticket", ticketId)
+    // RESGATAR TICKET
+    await page.waitForTimeout(3000);
 
-    await page.$eval(`button[id="${ticketId}"]`, e => e.click())
-    
-    return;
-    const divTicket= await page.$eval("div[id='j_idt7:tabelaTicketsDaSemanaAVenda:4:j_idt23']", el => el.textContent);
-    const totalTicket = divTicket.match('\W*(Qtd. Disponível: [0-9]+)\W*')[0].split(": ")[1]
-    
-    if(parseInt(totalTicket) <= 0) throw Error("Não há mais ticket disponíveis")
-    
-    //AGENDAR TICKET
-
-    await page.click("button[name='j_idt7:tabelaTicketsDaSemanaAVenda:4:j_idt38']");
+    await page.$eval(`button[id="${ticketId.replace('23', '40')}"]`, e => e.click());
 
     throw("Ticket Resgatado");
 
@@ -91,7 +73,7 @@ const agendarTicket = async({ login , senha }) => { // OU SÓ MATRICULA, CONTEND
 
 
 // process.env.APP_LOGIN
-agendarTicket({ login: "02272103367", senha: "02267@sari" });
+agendarTicket({ login: "02272103367", senha: "02267@sari", tipo: 'Jantar' });
 
 
 // cron.schedule('0 6 * * *', ()=> sendMessage('dia')   );
