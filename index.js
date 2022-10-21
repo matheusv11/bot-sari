@@ -59,6 +59,8 @@ const agendarTicket = async({ login , senha, tipo }) => { // OU SÓ MATRICULA, C
 
     await page.$eval(`button[id="${ticketId.replace('23', '40')}"]`, e => e.click());
 
+    await browser.close();
+
     throw("Ticket Resgatado");
 
   } catch (e) {
