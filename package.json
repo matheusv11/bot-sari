@@ -9,10 +9,12 @@
     "dev": "nodemon index.js"
   },
   "dependencies": {
-    "node-cron": "^3.0.0"
+    "chrome-aws-lambda": "^8.0.2",
+    "node-cron": "^3.0.0",
+    "puppeteer-core": "^8.0.0"
   },
   "devDependencies": {
-    "puppeteer": "^13.5.2",
-    "nodemon": "^2.0.15"
+    "nodemon": "^2.0.15",
+    "puppeteer": "^13.5.2"
   }
 }
