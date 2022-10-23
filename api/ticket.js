@@ -1,10 +1,7 @@
-// const puppeteer = require('puppeteer-core');
-// const chrome = require('chrome-aws-lambda');
+const puppeteer = require('puppeteer-core');
+const chrome = require('chrome-aws-lambda');
 
-import puppeteer from 'puppeteer-core'
-import chrome from 'chrome-aws-lambda';
-
-export default function ticket(req, res) {
+module.exports = async (req, res) => {
   try {
 
       // PUPPETEER CONFIG
