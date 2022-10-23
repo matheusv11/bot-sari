@@ -1,7 +1,7 @@
 const puppeteer = require('puppeteer-core');
 const chrome = require('chrome-aws-lambda');
 
-export default async function ticket(req, res) {
+export default function ticket(req, res) {
   try {
 
       // PUPPETEER CONFIG
@@ -38,12 +38,12 @@ export default async function ticket(req, res) {
       await page.goto("http://www.floriano.ifpi.edu.br:8080/CortexMobileIFPI/modulos/minhaConta/solicitarTickets.jsf");
       
       // VALIDAR DISPONIBILIDADE DE TICKET
-      const ticketId = await page.evaluate(eval =>{
+      const ticketId = await page.evaluate(val =>{
         const [...divs] = document.querySelectorAll("div[class='ui-panel-m-titlebar ui-bar ui-bar-inherit']")
   
         return divs.find(e => {
           const [dia, tipo] = e.innerText.split(' - ');
-          return dia.includes(new Date().toLocaleDateString('pt-BR')) && tipo === eval.tipo
+          return dia.includes(new Date().toLocaleDateString('pt-BR')) && tipo === val.tipo
         })?.parentElement.id
   
       }, { tipo: tipo });
@@ -72,5 +72,5 @@ export default async function ticket(req, res) {
     } catch (e) {
       console.error("ERROR=>", e);
     }
-  res.status(200).send("Eu tô aqui");
+    res.status(200).send("Eu tô aqui");
 }
