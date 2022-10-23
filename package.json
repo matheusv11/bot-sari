@@ -9,10 +9,10 @@
     "dev": "nodemon index.js"
   },
   "dependencies": {
-    "node-cron": "^3.0.0",
-    "puppeteer": "^13.5.2"
+    "node-cron": "^3.0.0"
   },
   "devDependencies": {
+    "puppeteer": "^13.5.2",
     "nodemon": "^2.0.15"
   }
 }
