@@ -2,6 +2,9 @@
   "name": "bot-sari",
   "version": "1.0.0",
   "main": "index.js",
+  "engines": {
+    "node": "^14"
+  },
   "repository": "git@github.com:matheusv11/bot-sari.git",
   "author": "matheus.silva <matheus.silva@icolabora.com>",
   "license": "MIT",

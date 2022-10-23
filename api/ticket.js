@@ -72,5 +72,6 @@ module.exports = async (req, res) => {
     } catch (e) {
       console.error("ERROR=>", e);
     }
+
     res.status(200).send("Eu tô aqui");
 }
