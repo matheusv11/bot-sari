@@ -93,6 +93,7 @@ module.exports = {
 
     const { login, senha, tipo } = req.body;
 
+    res.status(200).send("Ticket Resgatado");
     // PUPPETEER CONFIG
     const browser = await chrome.puppeteer.launch({
       args: chrome.args,
@@ -115,6 +116,7 @@ module.exports = {
       await page.type("#j_username", login);
       await page.type("#j_password", senha);
       await page.click("input[name='j_idt6:j_idt26']");
+      await page.waitForTimeout(500);
 
       // VERIFICAR SE HÁ ERRO
       const urlError = await page.url().includes("?erro=true");
@@ -140,6 +142,7 @@ module.exports = {
       }, { tipo: tipo });
 
       if(!ticketId) {
+        console.log("O sistema do sari está fechado ao momento")
         throw Error("O sistema do sari está fechado ao momento");
       }
 
@@ -147,6 +150,7 @@ module.exports = {
       const totalTicket = qtdTicket.match('\W*(Qtd. Disponível: [0-9]+)\W*')[0].split(": ")[1]
   
       if(parseInt(totalTicket) <= 0) {
+        console.log("Não há mais ticket disponíveis neste horário")
         throw Error("Não há mais ticket disponíveis neste horário");
       }
   
@@ -167,6 +171,6 @@ module.exports = {
       await browser.close();
     }
 
-    return res.status(200).send("Ticket Resgatado");
+    return;
   }
 }
