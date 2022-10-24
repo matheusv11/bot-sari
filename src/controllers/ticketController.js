@@ -101,7 +101,7 @@ module.exports = {
       headless: process.env.NODE_ENV === 'production' ? true : false
     }).then(async browser => {
       try {
-
+        console.log("PUPETEER IS REAL")
         const page = await browser.newPage();
   
         await page.setUserAgent(

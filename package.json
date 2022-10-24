@@ -6,7 +6,7 @@
   "author": "matheus.silva <matheus.silva@icolabora.com>",
   "license": "MIT",
   "engines": {
-    "node": "^14"
+    "node": "^16"
   },
   "scripts": {
     "start": "node src/index.js",
