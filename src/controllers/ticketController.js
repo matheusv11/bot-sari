@@ -11,6 +11,7 @@ module.exports = {
       executablePath: await chrome.executablePath,
       headless: chrome.headless
     }).then(async browser => {
+      console.log('Browser Iniciado')
       const tipo = 'jantar' // Temporário
 
       for await(let user of users) { // Com esse for, ele só vai um por vez // Com Promise.all() Abre tudo de uma vez
