@@ -29,7 +29,8 @@ module.exports = {
           await page.type("#j_username", user.login);
           await page.type("#j_password", user.password);
           await page.click("input[name='j_idt6:j_idt26']");
-        
+          await page.waitForTimeout(500);
+
           // VERIFICAR SE HÁ ERRO
           const urlError= await page.url().includes("?erro=true");
 
@@ -40,7 +41,8 @@ module.exports = {
 
           //PÁGINA DE TICKETS
           await page.goto("http://www.floriano.ifpi.edu.br:8080/CortexMobileIFPI/modulos/minhaConta/solicitarTickets.jsf");
-          
+          await page.waitForSelector("div[class='ui-panel-m-titlebar ui-bar ui-bar-inherit']");
+
           // VALIDAR DISPONIBILIDADE DE TICKET
           const ticketId = await page.evaluate(val =>{
             const [...divs] = document.querySelectorAll("div[class='ui-panel-m-titlebar ui-bar ui-bar-inherit']")
@@ -114,7 +116,8 @@ module.exports = {
         await page.type("#j_username", login);
         await page.type("#j_password", senha);
         await page.click("input[name='j_idt6:j_idt26']");
-  
+        await page.waitForTimeout(500);
+
         // VERIFICAR SE HÁ ERRO
         const urlError= await page.url().includes("?erro=true");
     
@@ -125,7 +128,8 @@ module.exports = {
   
         //PÁGINA DE TICKETS
         await page.goto("http://www.floriano.ifpi.edu.br:8080/CortexMobileIFPI/modulos/minhaConta/solicitarTickets.jsf");
-        
+        await page.waitForSelector("div[class='ui-panel-m-titlebar ui-bar ui-bar-inherit']");
+
         // VALIDAR DISPONIBILIDADE DE TICKET
         const ticketId = await page.evaluate(val =>{
           const [...divs] = document.querySelectorAll("div[class='ui-panel-m-titlebar ui-bar ui-bar-inherit']");

@@ -5,9 +5,6 @@
   "repository": "git@github.com:matheusv11/bot-sari.git",
   "author": "matheus.silva <matheus.silva@icolabora.com>",
   "license": "MIT",
-  "engines": {
-    "node": "^14"
-  },
   "scripts": {
     "dev": "nodemon src/index.js"
   },
