@@ -1,4 +1,4 @@
-const chrome = require('chrome-aws-lambda');
+const puppeteer = require('puppeteer');
 const knex = require('../db');
 
 module.exports = {
@@ -96,10 +96,9 @@ module.exports = {
     const { login, senha, tipo } = req.body;
 
     // PUPPETEER CONFIG
-    chrome.puppeteer.launch({
-      args: chrome.args,
-      executablePath: await chrome.executablePath,
-      headless: chrome.headless
+    puppeteer.launch({
+      args: ['--no-sandbox'],
+      headless: process.env.NODE_ENV === 'production' ? true : false
     }).then(async browser => {
       try {
 
