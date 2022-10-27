@@ -97,7 +97,10 @@ module.exports = {
 
     // PUPPETEER CONFIG
     puppeteer.launch({
-      args: ['--no-sandbox'],
+      args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox'
+      ],
       headless: process.env.NODE_ENV === 'production' ? true : false
     }).then(async browser => {
       try {
